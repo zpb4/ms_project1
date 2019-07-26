@@ -145,7 +145,9 @@ for(i in 1:length(co)){
 rm(list=ls())
 
 #c. Create array of temp, wind, spfh at given pl
-n<-length(fhr)
+source('output/index/array_rotate.r')
+n<-16
+fhr<-seq(6,(n*24),24)
 co<-c('tmp','uwnd','vwnd','spfh') #might need '_tot' or '_d' 
 ef<-c('cf','mean') 
 lvl<-925 ; z<-c(1000,925,850,700,500,300)
@@ -162,9 +164,11 @@ for(i in 1:length(co)){
       var_array[,,j,]<-var[,,pl,]
       rm(var)
     }
+    var_array<-array_rotate(var_array,1,2)
     saveRDS(var_array,paste('output/ivt/ncep_rf2_',ef[k],'_',co[i],'_',lvl,'.rds',sep=""))
   }
 }
 
+rm(list=ls())
 
 ##############################################################END########################################################

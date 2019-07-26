@@ -1,27 +1,37 @@
-##Process GPCC data
-cd /volumes/toshiba ext/project1/data/prcp/raw
+##Data Processing Script for GPCC Precipitation data
 
-#rename all files with '.' instead of '_'
-rename -n 's/_/./g' *.nc
+setwd("h:/ms_project1")
+library(abind)
+library(ncdf4)
 
-#concat first guess files
-start=2009
-end=2018
+#----------------------------------------------------------------------------------------------------------------------------
+#1) Configure NCEP GEFv2 Reforecast data
+source('output/index/array_rotate.r')
+source('data/prcp/gpcc_mask.r')
 
-for ((i=start; i<=end; i++)) 
-  do        
-y=$i'01'
-ncrcat -n 12,6,1 first.guess.daily.$y.nc  gpcc_fg.$i.nc
-done
-#add in 2019 (3 files) manually
-ncrcat -n 3,6,1 first.guess.daily.201901.nc gpcc_fg.2019.nc
-#combine subsets of data
-ncrcat -n 11,4,1 gpcc_fg.2009.nc gpcc_fg.20092019.nc
-ncrcat -n 35,4,1 full.data.daily.v2018.1982.nc  gpcc_fdv2018_19822016.nc
-ncrcat -n 3,4,1 gpcc_fg.2017.nc gpcc_fg.20172019.nc
-#pull out lat/lon and variable (precip) of interest, rename first guess to match full data
-ncks -d lat,30.,60. -d lon,-140.,-115. -v precip gpcc_fdv2018_19822016.nc -O gpcc_fd_wc_prcp_19822016.nc
-ncks -d lat,30.,60. -d lon,-140.,-115. -v p gpcc_fg.20172019.nc -O gpcc_fg_wc_prcp.20172019.nc
-ncrename -h -O -v p,precip gpcc_fg_wc_prcp.20172019.nc
-#concat full final file
-ncrcat gpcc_fd_wc_prcp_19822016.nc gpcc_fg_wc_prcp.20172019.nc gpcc_wc_prcp.1982_2019.nc
+
+nc<-nc_open('data/prcp/raw/gpcc_wc_prcp.1982_2019.nc')
+gpcc_full<-ncvar_get(nc,varid='precip'); nc_close(nc); rm(nc)
+gpcc_full<-array_rotate(gpcc_full,1,1)
+gpcc_full<-gpcc_mask(gpcc_full,1)
+saveRDS(gpcc_full,'data/prcp/gpcc_tp_wc_1982_2019.rds')
+
+full<-as.POSIXlt(seq(as.Date('1982-01-01'),as.Date('2019-03-31'),by='days'))
+sub<-which(full >= '1984-11-30') #cuts off input date with <= for some reason
+gpcc_sub<-gpcc_full[,,sub]; rm(gpcc_full)
+saveRDS(gpcc_sub,'data/prcp/gpcc_tp_wc_1984_2019.rds')
+
+sub_pos<-full[sub]
+sub_ondjfma<-sort(c(which(sub_pos$mo>=9), which(sub_pos$mo<=3)))
+sub_pos_ondjfma<-sub_pos[sub_ondjfma]
+gpcc_sub_ondjfma<-gpcc_sub[,,sub_ondjfma]
+saveRDS(gpcc_sub_ondjfma,'data/prcp/gpcc_tp_wc_1984_2019_ondjfma.rds')
+saveRDS(sub_pos_ondjfma,'output/index/tp_dates19842019_ondjfma.rds')
+saveRDS(sub_ondjfma,'output/index/tp_idx19842019_ondjfma.rds')
+saveRDS(sub_pos,'output/index/tp_dates19842019.rds')
+
+
+rm(list=ls())
+
+
+############################################################END###############################################################
