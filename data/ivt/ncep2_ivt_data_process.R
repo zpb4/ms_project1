@@ -67,18 +67,6 @@ saveRDS(ivt_v,paste('data/ivt/ncep2_ivt_v_',ztime,'.rds',sep=""))
 saveRDS(ivt_tot,paste('data/ivt/ncep2_ivt_tot_',ztime,'.rds',sep=""))
 saveRDS(ivt_d,paste('data/ivt/ncep2_ivt_d_',ztime,'.rds',sep=""))
 
-ondjfma<-readRDS('output/index/tp_idx19842019_ondjfma.rds')
-
-ivt_u<-ivt_u[,,ondjfma]
-ivt_v<-ivt_v[,,ondjfma]
-ivt_tot<-ivt_tot[,,ondjfma]
-ivt_d<-ivt_d[,,ondjfma]
-
-saveRDS(ivt_u,paste('data/ivt/ncep2_ivt_u_',ztime,'_ondjfma.rds',sep=""))
-saveRDS(ivt_v,paste('data/ivt/ncep2_ivt_v_',ztime,'_ondjfma.rds',sep=""))
-saveRDS(ivt_tot,paste('data/ivt/ncep2_ivt_tot_',ztime,'_ondjfma.rds',sep=""))
-saveRDS(ivt_d,paste('data/ivt/ncep2ivt_d_',ztime,'_ondjfma.rds',sep=""))
-
 rm(list=ls())
 
 #################################################END##################################################

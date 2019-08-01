@@ -171,4 +171,23 @@ for(i in 1:length(co)){
 
 rm(list=ls())
 
+
+test<-readRDS('data/ivt/ncep_rf2_cf_ivt_u.rds')
+length(which(is.na(uwnd)==T))
+
+test<-readRDS('data/geoht/ncep_rf2_cf_geoht_500.rds')
+length(which(is.na(test)==T))
+
+test<-readRDS('data/ivt/ncep2_ivt_tot_6.rds')
+length(which(is.na(test)==T))
+
+k<-1
+na<-c()
+for (j in 1:length(fhr)) {
+  uwnd<-readRDS(paste('data/ivt/raw/uwnd_',ef[k],'_',fhr[j],'.rds',sep=""))
+  n<-length(which(is.na(uwnd)==T))
+  na[j]<-c(na,n)
+}
+
+s<-sum(na)
 ##############################################################END########################################################

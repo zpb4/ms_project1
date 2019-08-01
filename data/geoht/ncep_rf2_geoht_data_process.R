@@ -30,7 +30,7 @@ source('output/index/array_rotate.r')
 n<-16
 fhr<-seq(6,(n*24),24)
 ht<-500
-ef<-'mean'#c('cf','mean') 
+ef<-c('cf','mean') 
 d<-readRDS('data/geoht/raw/500_cf_6.rds')
 dims<-c(dim(d)[1],dim(d)[2],n,dim(d)[3])
 rm(d)

@@ -14,15 +14,9 @@ ztime<-6 #Z time of
 var<-'tp'
 ef<-c('cf','mean')
 h_idx<-seq(ztime,(24*(ld-1)+ztime),24)
-ls<-vector("list",17); ls[[1]]<-2:3; ls[[2]]<-4:11; ls[[3]]<-12:19; ls[[4]]<-20:26; ls[[5]]<-27:30
+ls<-vector("list",17); ls[[1]]<-c(1,3); ls[[2]]<-c(5,7,9,11);ls[[3]]<-c(13,15,17,19); ls[[4]]<-c(21,23,25,26); ls[[5]]<-27:30
 ls[[6]]<-31:34; ls[[7]]<-35:38; ls[[8]]<-39:42; ls[[9]]<-43:45; ls[[10]]<-3; ls[[11]]<-4:7
 ls[[12]]<-8:11; ls[[13]]<-12:15; ls[[14]]<-16:19; ls[[15]]<-20:23; ls[[16]]<-24:27; ls[[17]]<-28:31
-
-#for(i in 1:length(ls)){
-  #if(i<10) out<-fhr1[ls[[i]]]
-  #else out<-fhr2[ls[[i]]]
-  #print(out)
-#}
 
 for(j in 1:length(var)){
   for(k in 1:length(ef)){
@@ -43,12 +37,18 @@ for(j in 1:length(var)){
     saveRDS(dat,paste('data/prcp/ncep_rf2_',lab,'.rds',sep=""))
     dat<-gpcc_mask(dat,2)
     saveRDS(dat,paste('data/prcp/ncep_rf2_',lab,'_mask.rds',sep=""))
-    dat<-dat[,,,ondjfma]
-    saveRDS(dat,paste('data/prcp/ncep_rf2_',lab,'_ondjfma.rds',sep=""))
   }
 }
 
 rm(list=ls())
+
+#fhr1<-ncvar_get(nc1,'fhour')
+#fhr2<-ncvar_get(nc2,'fhour')
+#for(i in 1:length(ls)){
+#if(i<10) out<-fhr1[ls[[i]]]
+#else out<-fhr2[ls[[i]]]
+#print(out)
+#}
 
 
 ############################################################END###############################################################
