@@ -25,13 +25,15 @@ co<-rep(18:20,4)
 gpcc_ev<-c()
 p1<-0.95
 min<-1.0
+p_vec<-c()
 
 for (i in 1:12) {
   s_dat<-sort(gpcc_sub_ondjfma[rw[i],co[i],])
-  s_dat<-s_dat[which(s_dat>min)] #reduces vector to only non-zero precip days
-  n<-round(p1*(length(s_dat))) #identify top 1% of events in non-zero precip
+  s_dat<-s_dat[which(s_dat>min)] #reduces vector to only >'min' precip days
+  n<-round(p1*(length(s_dat))) #identify top '1-p1'% of events in non-zero precip
   gpcc_ev<-c(gpcc_ev,which(gpcc_sub_ondjfma[rw[i],co[i],]>s_dat[n]))
   gpcc_ev<-gpcc_ev[!duplicated(gpcc_ev)] #removes duplicate values
+  p_vec[i]<-s_dat[n] #records value of smallest precip event for analysis
 }
 gpcc_ev<-sort(gpcc_ev)
 
@@ -72,8 +74,11 @@ cl_sz<-as.numeric(cl_sz)
 
 gpcc_ev_dates_1<-sub_pos_ondjfma[d1_ev]
 gpcc_ev_index_1<-d1_ev
-gpcc_ev_dates_max<-as.Date(as.numeric(m_clust[,1]), origin = '1970-01-01')
+gpcc_ev_dates_max<-as.Date(as.numeric(m_clust[,1]), origin = '1984-11-30')
 gpcc_ev_index_max<-as.numeric(m_clust[,3])
+dates<-readRDS('output/index/tp_dates19842019.rds')
+full_idx1<-which(dates%in%gpcc_ev_dates_1)
+full_idx_max<-which(dates%in%gpcc_ev_dates_max)
 
 ar_tab<-read.table("output/index/ARcatalog_NCEP_NEW_1948-2019_COMPREHENSIVE_20FEB2019.txt", header = T)
 ar_tab<-ar_tab[which(ar_tab$Year>=1984),]
@@ -102,6 +107,8 @@ saveRDS(gpcc_ev_dates_1, file = "output/index/gpcc_ev_dates_1.rds")
 saveRDS(gpcc_ev_index_1, file = "output/index/gpcc_ev_index_1.rds")
 saveRDS(gpcc_ev_dates_max, file = "output/index/gpcc_ev_dates_max.rds")
 saveRDS(gpcc_ev_index_max, file = "output/index/gpcc_ev_index_max.rds")
+saveRDS(full_idx1, file = "output/index/gpcc_ev_index_1_full.rds")
+saveRDS(full_idx_max, file = "output/index/gpcc_ev_index_max_full.rds")
 
 #stat
 no_ar<-length(which(ar_match=='No AR')) #ans: 7 / 24 for 95 pcntile
